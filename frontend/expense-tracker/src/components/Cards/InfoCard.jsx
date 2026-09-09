@@ -3,15 +3,19 @@ import { addThousandsSeparator } from "../../utils/helper";
 
 const InfoCard = ({ icon, label, value, color }) => {
   return (
-    <div className="flex items-center gap-5 bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 animate-fadeIn">
+    <div className="et-card flex items-center gap-5 p-5">
       <div
-        className={`w-14 h-14 flex items-center justify-center text-[26px] text-white ${color} rounded-2xl shadow-lg flex-shrink-0`}
+        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[26px] text-white shadow-[var(--shadow-button)] ${color}`}
       >
         {icon}
       </div>
-      <div>
-        <h6 className="text-sm text-gray-500 dark:text-gray-400 mb-1 font-medium">{label}</h6>
-        <span className="text-2xl font-bold text-gray-900 dark:text-white">
+
+      <div className="min-w-0">
+        <h6 className="mb-1 text-sm font-medium text-ink-muted">
+          {label}
+        </h6>
+
+        <span className="block text-2xl font-bold tracking-tight text-ink">
           ₹{addThousandsSeparator(value)}
         </span>
       </div>

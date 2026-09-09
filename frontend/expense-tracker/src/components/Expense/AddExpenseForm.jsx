@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { LuX, LuChevronDown } from "react-icons/lu";
+import {
+  LuX,
+  LuChevronDown,
+} from "react-icons/lu";
+
 import Input from "../Inputs/Input";
 import { EXPENSE_CATEGORIES } from "../../utils/helper";
 
@@ -54,21 +58,24 @@ const AddExpenseForm = ({
 
   return (
     <div className="p-6 sm:p-7">
-      <div className="flex items-center justify-between mb-6">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h3 className="text-xl font-bold tracking-tight text-ink">
             Add Expense
           </h3>
 
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-sm text-ink-muted">
             Add a new expense transaction
           </p>
         </div>
 
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
+            className="et-icon-btn shrink-0"
+            aria-label="Close expense form"
           >
             <LuX size={18} />
           </button>
@@ -79,34 +86,33 @@ const AddExpenseForm = ({
         onSubmit={handleSubmit}
         className="space-y-1"
       >
+        {/* Category */}
         <div>
-          <label className="text-[13px] font-medium text-slate-700 dark:text-slate-300">
+          <label className="text-[13px] font-medium text-ink-muted">
             Expense Category *
           </label>
 
           <div className="et-input relative">
             <select
               value={form.category}
-              onChange={handleChange(
-                "category"
-              )}
+              onChange={handleChange("category")}
               className="et-select pr-8"
             >
               <option value="">
                 Select expense category
               </option>
 
-              {EXPENSE_CATEGORIES.map((c) => (
+              {EXPENSE_CATEGORIES.map((category) => (
                 <option
-                  key={c}
-                  value={c}
+                  key={category}
+                  value={category}
                 >
-                  {c}
+                  {category}
                 </option>
               ))}
             </select>
 
-            <LuChevronDown className="absolute right-4 text-slate-400 pointer-events-none" />
+            <LuChevronDown className="pointer-events-none absolute right-4 text-ink-faint" />
           </div>
         </div>
 
@@ -130,14 +136,12 @@ const AddExpenseForm = ({
           type="text"
           placeholder="e.g. Grocery shopping"
           value={form.description}
-          onChange={handleChange(
-            "description"
-          )}
+          onChange={handleChange("description")}
         />
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mt-2">
-            <p className="text-red-600 dark:text-red-400 text-sm">
+          <div className="mt-2 rounded-xl border border-danger bg-danger-soft px-4 py-3">
+            <p className="text-sm text-danger">
               {error}
             </p>
           </div>

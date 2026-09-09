@@ -1,3 +1,5 @@
+
+
 import React from "react";
 import {
   PieChart,
@@ -13,12 +15,12 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const item = payload[0];
     return (
-      <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl p-3 shadow-lg text-sm">
-        <p className="font-semibold text-gray-700 dark:text-gray-300">{item.name}</p>
+      <div className="bg-surface border border-line rounded-xl p-3 shadow-[var(--shadow-elevated)] text-sm">
+        <p className="font-semibold text-ink">{item.name}</p>
         <p style={{ color: item.payload.fill }} className="mt-1">
           ₹{item.value?.toLocaleString("en-IN")}
         </p>
-        <p className="text-gray-400 text-xs mt-0.5">
+        <p className="text-ink-faint text-xs mt-0.5">
           {item.payload.percent ? `${(item.payload.percent * 100).toFixed(1)}%` : ""}
         </p>
       </div>
@@ -30,7 +32,7 @@ const CustomTooltip = ({ active, payload }) => {
 const CustomPieChart = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+      <div className="flex items-center justify-center h-[280px] text-ink-faint text-sm">
         No expense data available
       </div>
     );

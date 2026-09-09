@@ -2,30 +2,119 @@
 
 @import "tailwindcss";
 
+/* Ensure class-based dark mode (`.dark` on <html>) drives every dark: variant,
+   regardless of how Tailwind is configured elsewhere. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  ============================================================
+  DESIGN TOKENS
+  ------------------------------------------------------------
+  Every color below is registered with Tailwind via @theme, so
+  `bg-app`, `text-ink`, `border-line`, `bg-primary-soft`, etc.
+  become real utility classes. The *values* are re-declared in
+  `.dark { ... }` further down, so a single semantic class
+  (e.g. `bg-surface`) automatically resolves to the right color
+  in both themes — no more parallel `dark:` classes needed.
+  ============================================================
+*/
 @theme {
   --font-display: "Poppins", "sans-serif";
+
+  /* Surfaces / layout hierarchy */
+  --color-app: #f4f6fb;
+  --color-nav: #ffffff;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-input: #ffffff;
+  --color-hover: #f1f5f9;
+
+  /* Borders */
+  --color-line: #e2e8f0;
+  --color-line-subtle: #edf1f7;
+
+  /* Text */
+  --color-ink: #0f172a;
+  --color-ink-muted: #58627a;
+  --color-ink-faint: #94a3b8;
+
+  /* Brand */
   --color-primary: #875cf5;
-  --color-primary-dark: #6d3fd6;
+  --color-primary-hover: #6d3fd6;
+  --color-primary-soft: #f2edfe;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-success-soft: #ecfdf5;
+
+  --color-danger: #f43f5e;
+  --color-danger-soft: #fff1f2;
+
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fffbeb;
+}
+
+/* Non-color tokens (shadows) — plain CSS variables, swapped per theme below */
+:root {
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 24px 55px rgba(15, 23, 42, 0.12);
+  --shadow-button: 0 10px 25px rgba(135, 92, 245, 0.25);
+}
+
+/*
+  ============================================================
+  DARK THEME OVERRIDES
+  ------------------------------------------------------------
+  Layered depth: app < nav/sidebar < card surface < elevated
+  hover surface, with input recessed slightly darker than the
+  card it sits in. Nothing here is a simple inversion of light
+  mode values.
+  ============================================================
+*/
+.dark {
+  --color-app: #090c14;
+  --color-nav: #0c101c;
+  --color-surface: #10141f;
+  --color-elevated: #161b28;
+  --color-input: #0d111c;
+  --color-hover: #171d2c;
+
+  --color-line: #232a3b;
+  --color-line-subtle: #1a2030;
+
+  --color-ink: #eef1f6;
+  --color-ink-muted: #97a1b8;
+  --color-ink-faint: #667085;
+
+  --color-primary: #9370fa;
+  --color-primary-hover: #a888fb;
+  --color-primary-soft: rgba(147, 112, 250, 0.14);
+
+  --color-success: #34d399;
+  --color-success-soft: rgba(52, 211, 153, 0.14);
+
+  --color-danger: #fb7185;
+  --color-danger-soft: rgba(251, 113, 133, 0.14);
+
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgba(251, 191, 36, 0.14);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 30px 70px rgba(0, 0, 0, 0.55);
+  --shadow-button: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
 
 @layer base {
   html {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     scroll-behavior: smooth;
   }
 
   body {
-    background: #f5f7fb;
-    color: #0f172a;
+    background: var(--color-app);
+    color: var(--color-ink);
     overflow-x: hidden;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-  }
-
-  html.dark body {
-    background: #0b1120;
-    color: #e2e8f0;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   * {
@@ -42,9 +131,24 @@
   select {
     appearance: none;
   }
+
+  /* Accessible, visible focus ring for every interactive element.
+     Never relies on color alone — outline + offset. */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 }
 
-/* INPUT */
+/* ============================================================
+   INPUT
+   ============================================================ */
 
 .et-input {
   width: 100%;
@@ -52,34 +156,28 @@
   align-items: center;
   gap: 0.75rem;
 
-  background: rgba(255,255,255,0.92);
-  border: 1px solid #dbe4f0;
-
-  color: #0f172a;
+  background: var(--color-input);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
 
   padding: 0.9rem 1rem;
-
   border-radius: 1rem;
 
-  transition: all 0.25s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 
   margin-top: 0.55rem;
   margin-bottom: 1rem;
 
-  box-shadow:
-    0 1px 2px rgba(15,23,42,0.03),
-    0 6px 20px rgba(15,23,42,0.03);
+  box-shadow: var(--shadow-card);
 }
 
 .et-input:hover {
-  border-color: #c6d3e1;
+  border-color: var(--color-primary);
 }
 
 .et-input:focus-within {
-  border-color: #875cf5;
-  box-shadow:
-    0 0 0 4px rgba(135,92,245,0.12),
-    0 8px 25px rgba(135,92,245,0.08);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
 }
 
 .et-input input,
@@ -94,34 +192,27 @@
 
 .et-input input::placeholder,
 .et-input textarea::placeholder {
-  color: #94a3b8;
+  color: var(--color-ink-faint);
 }
 
-/* BUTTONS */
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 
 .et-btn {
-  background: linear-gradient(
-    135deg,
-    #875cf5,
-    #6d3fd6
-  );
-
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: white;
   font-size: 0.9rem;
   font-weight: 600;
 
   border: none;
-
   padding: 0.85rem 1.5rem;
-
   border-radius: 1rem;
 
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 
-  transition: all 0.25s ease;
-
-  box-shadow:
-    0 10px 30px rgba(135,92,245,0.28);
+  box-shadow: var(--shadow-button);
 
   display: inline-flex;
   align-items: center;
@@ -130,24 +221,25 @@
 
 .et-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow:
-    0 18px 35px rgba(135,92,245,0.35);
+  box-shadow: 0 18px 35px rgba(135, 92, 245, 0.32);
+}
+
+.et-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .et-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .et-btn-secondary {
-  background: rgba(255,255,255,0.88);
-
-  border: 1px solid #dbe4f0;
-
-  color: #334155;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-muted);
 
   padding: 0.8rem 1.2rem;
-
   border-radius: 1rem;
 
   font-size: 0.88rem;
@@ -157,39 +249,60 @@
   align-items: center;
   gap: 0.5rem;
 
-  transition: all 0.25s ease;
-
-  backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .et-btn-secondary:hover {
-  border-color: #875cf5;
-  color: #875cf5;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   transform: translateY(-1px);
 }
 
-/* CARDS */
+.et-btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Standardized icon button — navbar toggle, theme toggle, etc. */
+.et-icon-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-muted);
+
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.et-icon-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
 
 .et-card {
-  background: rgba(255,255,255,0.92);
-
-  border: 1px solid rgba(226,232,240,0.8);
-
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
   border-radius: 1.35rem;
-
   padding: 1.5rem;
 
-  box-shadow:
-    0 8px 30px rgba(15,23,42,0.04);
+  box-shadow: var(--shadow-card);
 
-  backdrop-filter: blur(14px);
-
-  transition: all 0.25s ease;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .et-card:hover {
-  box-shadow:
-    0 14px 40px rgba(15,23,42,0.06);
+  box-shadow: var(--shadow-elevated);
 }
 
 .et-card-sm-btn {
@@ -197,44 +310,39 @@
   align-items: center;
   gap: 0.45rem;
 
-  background: #f8fafc;
-
-  border: 1px solid #e2e8f0;
-
-  color: #475569;
+  background: var(--color-hover);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-muted);
 
   border-radius: 0.8rem;
-
   padding: 0.45rem 0.95rem;
 
   font-size: 0.75rem;
   font-weight: 500;
 
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .et-card-sm-btn:hover {
-  border-color: #875cf5;
-  color: #875cf5;
-  background: #f5f3ff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
-/* MODAL */
+/* ============================================================
+   MODAL
+   ============================================================ */
 
 .et-modal {
-  background: rgba(255,255,255,0.96);
-
-  border: 1px solid rgba(226,232,240,0.7);
-
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
   border-radius: 1.5rem;
-
-  box-shadow:
-    0 25px 60px rgba(15,23,42,0.18);
-
-  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-elevated);
 }
 
-/* SELECT */
+/* ============================================================
+   SELECT
+   ============================================================ */
 
 .et-select {
   width: 100%;
@@ -246,102 +354,60 @@
 }
 
 .et-select option {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 
-html.dark .et-select option {
-  background: #1e293b;
-  color: #f1f5f9;
-}
-
-/* SKELETON */
+/* ============================================================
+   SKELETON
+   ============================================================ */
 
 .et-skeleton {
   background: linear-gradient(
     90deg,
-    #f1f5f9 25%,
-    #e2e8f0 50%,
-    #f1f5f9 75%
+    var(--color-line-subtle) 25%,
+    var(--color-hover) 50%,
+    var(--color-line-subtle) 75%
   );
-
   background-size: 1000px 100%;
-
   animation: et-shimmer 1.8s infinite linear;
-
   border-radius: 1rem;
 }
 
-/* DARK MODE */
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
 
-html.dark .et-input {
-  background: rgba(15,23,42,0.9);
-
-  border-color: rgba(51,65,85,0.9);
-
-  color: #f1f5f9;
-
-  box-shadow:
-    0 6px 18px rgba(0,0,0,0.25);
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-html.dark .et-input:hover {
-  border-color: #475569;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-html.dark .et-input input::placeholder {
-  color: #64748b;
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
 }
 
-html.dark .et-btn-secondary {
-  background: rgba(15,23,42,0.9);
-
-  border-color: #334155;
-
-  color: #cbd5e1;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
 }
 
-html.dark .et-btn-secondary:hover {
-  color: #875cf5;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-html.dark .et-card {
-  background: rgba(15,23,42,0.88);
-
-  border-color: rgba(51,65,85,0.75);
-
-  box-shadow:
-    0 12px 35px rgba(0,0,0,0.35);
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-html.dark .et-card-sm-btn {
-  background: #0f172a;
-  border-color: #334155;
-  color: #cbd5e1;
-}
-
-html.dark .et-card-sm-btn:hover {
-  background: rgba(135,92,245,0.12);
-}
-
-html.dark .et-modal {
-  background: rgba(15,23,42,0.96);
-
-  border-color: rgba(51,65,85,0.75);
-}
-
-html.dark .et-skeleton {
-  background: linear-gradient(
-    90deg,
-    #111827 25%,
-    #1e293b 50%,
-    #111827 75%
-  );
-
-  background-size: 1000px 100%;
-}
-
-/* ANIMATIONS */
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 
 .et-fade-in {
   animation: et-fadeIn 0.35s ease forwards;
@@ -355,7 +421,6 @@ html.dark .et-skeleton {
   0% {
     background-position: -1000px 0;
   }
-
   100% {
     background-position: 1000px 0;
   }
@@ -366,7 +431,6 @@ html.dark .et-skeleton {
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -378,33 +442,19 @@ html.dark .et-skeleton {
     opacity: 0;
     transform: translateX(-18px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-/* SCROLLBAR */
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #875cf5;
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

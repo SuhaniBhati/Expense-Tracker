@@ -1,3 +1,4 @@
+
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -57,8 +58,8 @@ const Login = () => {
   return (
     <AuthLayout>
       <div className="et-fade-in">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Welcome Back</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+        <h3 className="text-2xl font-bold text-ink mb-1">Welcome Back</h3>
+        <p className="text-sm text-ink-muted mb-8">
           Sign in to your account to continue
         </p>
 
@@ -87,7 +88,7 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-6 text-center">
+        <p className="text-sm text-ink-muted mt-6 text-center">
           Don't have an account?{" "}
           <Link className="font-semibold text-primary hover:underline" to="/signup">
             Create one

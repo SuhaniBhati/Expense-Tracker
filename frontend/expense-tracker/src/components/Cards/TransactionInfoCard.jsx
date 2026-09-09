@@ -1,6 +1,15 @@
 import React from "react";
-import { LuTrendingUp, LuTrendingDown, LuTrash2, LuUtensils } from "react-icons/lu";
-import { formatDate, formatCurrency, CATEGORY_COLORS } from "../../utils/helper";
+import {
+  LuTrendingUp,
+  LuTrash2,
+  LuUtensils,
+} from "react-icons/lu";
+
+import {
+  formatDate,
+  formatCurrency,
+  CATEGORY_COLORS,
+} from "../../utils/helper";
 
 const TransactionInfoCard = ({
   title,
@@ -12,17 +21,27 @@ const TransactionInfoCard = ({
   onDelete,
 }) => {
   const isIncome = type === "income";
-  const categoryColor = CATEGORY_COLORS[title] || (isIncome ? "#22c55e" : "#ef4444");
+
+  const categoryColor =
+    CATEGORY_COLORS[title] ||
+    (isIncome ? "#22c55e" : "#ef4444");
 
   return (
-    <div className="group relative flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-all duration-200">
+    <div className="group relative flex items-center gap-4 rounded-xl p-3 transition-colors duration-200 hover:bg-hover">
       {/* Icon */}
       <div
-        className="w-11 h-11 flex items-center justify-center rounded-xl text-lg flex-shrink-0"
-        style={{ backgroundColor: categoryColor + "20", color: categoryColor }}
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg"
+        style={{
+          backgroundColor: `${categoryColor}20`,
+          color: categoryColor,
+        }}
       >
         {icon ? (
-          <img src={icon} alt={title} className="w-6 h-6" />
+          <img
+            src={icon}
+            alt={title}
+            className="h-6 w-6 object-contain"
+          />
         ) : isIncome ? (
           <LuTrendingUp />
         ) : (
@@ -30,17 +49,22 @@ const TransactionInfoCard = ({
         )}
       </div>
 
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{title}</p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatDate(date)}</p>
+      {/* Information */}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium text-ink">
+          {title}
+        </p>
+
+        <p className="mt-0.5 text-xs text-ink-faint">
+          {formatDate(date)}
+        </p>
       </div>
 
-      {/* Amount */}
-      <div className="flex items-center gap-3 flex-shrink-0">
+      {/* Amount and Delete */}
+      <div className="flex shrink-0 items-center gap-3">
         <span
           className={`text-sm font-bold ${
-            isIncome ? "text-emerald-500" : "text-red-500"
+            isIncome ? "text-success" : "text-danger"
           }`}
         >
           {isIncome ? "+" : "-"}
@@ -49,9 +73,11 @@ const TransactionInfoCard = ({
 
         {!hideDeleteBtn && (
           <button
+            type="button"
             onClick={onDelete}
-            className="opacity-0 group-hover:opacity-100 w-8 h-8 flex items-center justify-center rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-danger opacity-0 transition-all duration-200 hover:bg-danger-soft group-hover:opacity-100 focus-visible:opacity-100"
             title="Delete"
+            aria-label={`Delete ${title}`}
           >
             <LuTrash2 className="text-base" />
           </button>

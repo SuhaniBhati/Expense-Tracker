@@ -59,7 +59,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
       maxWidth="max-w-lg"
     >
       <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        <h2 className="text-2xl font-bold text-ink mb-6">
           Edit Profile
         </h2>
 
@@ -73,7 +73,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         />
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="text-sm font-medium text-ink-muted">
             Full Name
           </label>
 
@@ -83,13 +83,13 @@ const EditProfileModal = ({ isOpen, onClose }) => {
             onChange={(e) =>
               setFullName(e.target.value)
             }
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-3 rounded-xl border border-line bg-input text-ink outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
             placeholder="Enter your full name"
           />
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm mt-4">
+          <p className="text-danger text-sm mt-4">
             {error}
           </p>
         )}
@@ -97,7 +97,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         <div className="flex justify-end gap-3 mt-8">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
+            className="px-5 py-2.5 rounded-xl border border-line text-ink-muted hover:bg-hover transition-all"
           >
             Cancel
           </button>
@@ -105,7 +105,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl bg-primary text-white hover:opacity-90 transition-all disabled:opacity-50"
+            className="px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-hover transition-all disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>

@@ -1,5 +1,6 @@
+
+
 import React from "react";
-import { LuX } from "react-icons/lu";
 
 const Modal = ({ isOpen, onClose, children, maxWidth = "max-w-md" }) => {
   if (!isOpen) return null;
@@ -14,7 +15,7 @@ const Modal = ({ isOpen, onClose, children, maxWidth = "max-w-md" }) => {
 
       {/* Content */}
       <div
-        className={`relative w-full ${maxWidth} bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-fadeIn`}
+        className={`relative w-full ${maxWidth} et-modal et-fade-in`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -6,22 +6,31 @@ import { useTheme } from "../../context/ThemeContext";
 import { UserContext } from "../../context/userContext";
 import CharAvatar from "../Cards/CharAvatar";
 
-const Navbar = ({ activeMenu }) => {
-  const [openSideMenu, setOpenSideMenu] = useState(false);
+const Navbar = ({ activeMenu, sidebarOpen, setSidebarOpen }) => {
+  // Mobile overlay has its own local state (defaults closed) — distinct
+  // from the desktop `sidebarOpen` (defaults open), but the same button
+  // toggles both since only one of the two is ever visible at a time.
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
   const { user } = useContext(UserContext);
 
+  const handleMenuButtonClick = () => {
+    setMobileMenuOpen((prev) => !prev);
+    setSidebarOpen((prev) => !prev);
+  };
+
   return (
-    <nav className="sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800/80 bg-white/95 dark:bg-slate-950/90 backdrop-blur-xl transition-all duration-300">
+    <nav className="sticky top-0 z-40 border-b border-line bg-nav/95 backdrop-blur-xl transition-colors duration-300">
       <div className="flex items-center justify-between px-4 md:px-6 py-3">
         {/* LEFT */}
         <div className="flex items-center gap-3">
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary hover:bg-violet-50 dark:hover:bg-slate-800 transition-all duration-200"
-            onClick={() => setOpenSideMenu(!openSideMenu)}
+            className="et-icon-btn"
+            onClick={handleMenuButtonClick}
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen || sidebarOpen}
           >
-            {openSideMenu ? (
+            {mobileMenuOpen ? (
               <HiOutlineX className="text-[22px]" />
             ) : (
               <HiOutlineMenu className="text-[22px]" />
@@ -29,15 +38,15 @@ const Navbar = ({ activeMenu }) => {
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-md shadow-violet-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-[var(--shadow-button)]">
               <span className="text-white text-base font-bold">₹</span>
             </div>
 
             <div className="hidden sm:block">
-              <h2 className="text-[15px] font-bold text-slate-900 dark:text-white leading-tight">
+              <h2 className="text-[15px] font-bold text-ink leading-tight">
                 Expense Tracker
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-ink-muted">
                 Smart finance management
               </p>
             </div>
@@ -48,7 +57,7 @@ const Navbar = ({ activeMenu }) => {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary hover:bg-violet-50 dark:hover:bg-slate-800 transition-all duration-200 shadow-sm"
+            className="et-icon-btn"
             aria-label="Toggle theme"
           >
             {isDark ? (
@@ -62,7 +71,7 @@ const Navbar = ({ activeMenu }) => {
             <img
               src={user.profileImageUrl}
               alt="Profile"
-              className="w-10 h-10 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
+              className="w-10 h-10 rounded-2xl object-cover border border-line shadow-[var(--shadow-card)]"
             />
           ) : (
             <CharAvatar
@@ -75,14 +84,14 @@ const Navbar = ({ activeMenu }) => {
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR */}
-      {openSideMenu && (
+      {/* MOBILE SIDEBAR (overlay) */}
+      {mobileMenuOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] lg:hidden"
-          onClick={() => setOpenSideMenu(false)}
+          onClick={() => setMobileMenuOpen(false)}
         >
           <div
-            className="w-72 h-full bg-white dark:bg-slate-950 shadow-2xl et-slide-in"
+            className="w-72 h-full bg-surface shadow-[var(--shadow-elevated)] et-slide-in"
             onClick={(e) => e.stopPropagation()}
           >
             <SideMenu activeMenu={activeMenu} />

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { LuPlus, LuDownload, LuWalletMinimal, LuTrendingUp } from "react-icons/lu";
@@ -119,8 +120,8 @@ const Income = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Income</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <h1 className="text-2xl font-bold text-ink">Income</h1>
+            <p className="text-sm text-ink-muted mt-0.5">
               Track all your income sources
             </p>
           </div>
@@ -158,7 +159,7 @@ const Income = () => {
 
         {/* Chart */}
         <div className="et-card">
-          <h5 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
+          <h5 className="text-base font-semibold text-ink mb-4">
             Income Trend (Last 6 Months)
           </h5>
           <CustomLineChart data={chartData} dataKey="amount" color="#22c55e" label="Income" />
@@ -171,7 +172,7 @@ const Income = () => {
             placeholder="Search income..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-gray-800 dark:text-gray-200 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-line bg-surface text-sm text-ink outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
           />
           <div className="flex gap-2 flex-wrap">
             {sources.map((s) => (
@@ -180,8 +181,8 @@ const Income = () => {
                 onClick={() => setFilterSource(s)}
                 className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${
                   filterSource === s
-                    ? "bg-primary text-white shadow-md shadow-purple-500/20"
-                    : "bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-primary hover:text-primary"
+                    ? "bg-primary text-white shadow-[var(--shadow-button)]"
+                    : "bg-surface text-ink-muted border border-line hover:border-primary hover:text-primary"
                 }`}
               >
                 {s}
@@ -192,7 +193,7 @@ const Income = () => {
 
         {/* Transactions List */}
         <div className="et-card">
-          <h5 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+          <h5 className="text-base font-semibold text-ink mb-2">
             All Income ({filtered.length})
           </h5>
 
@@ -203,7 +204,7 @@ const Income = () => {
               ))}
             </div>
           ) : filtered.length > 0 ? (
-            <div className="divide-y divide-gray-50 dark:divide-slate-800 mt-2">
+            <div className="divide-y divide-line-subtle mt-2">
               {filtered.map((item) => (
                 <TransactionInfoCard
                   key={item._id}
@@ -218,8 +219,8 @@ const Income = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <LuWalletMinimal className="text-4xl text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400 dark:text-gray-500 text-sm">
+              <LuWalletMinimal className="text-4xl text-ink-faint mx-auto mb-3" />
+              <p className="text-ink-faint text-sm">
                 {searchQuery || filterSource !== "All"
                   ? "No results match your filter"
                   : "No income added yet. Click 'Add Income' to get started!"}

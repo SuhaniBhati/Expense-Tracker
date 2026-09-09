@@ -56,7 +56,7 @@ const ProfilePhotoSelector = ({
 
       {!imageSource ? (
         <div
-          className="relative w-24 h-24 flex items-center justify-center bg-violet-100 dark:bg-violet-900/30 rounded-3xl cursor-pointer hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-all duration-200"
+          className="relative w-24 h-24 flex items-center justify-center bg-primary-soft rounded-3xl cursor-pointer hover:bg-primary/15 transition-all duration-200"
           onClick={() =>
             inputRef.current.click()
           }
@@ -65,7 +65,7 @@ const ProfilePhotoSelector = ({
 
           <button
             type="button"
-            className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-xl absolute -bottom-2 -right-2 shadow-md hover:bg-purple-700 transition-colors"
+            className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-xl absolute -bottom-2 -right-2 shadow-[var(--shadow-button)] hover:bg-primary-hover transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               inputRef.current.click();
@@ -79,12 +79,12 @@ const ProfilePhotoSelector = ({
           <img
             src={imageSource}
             alt="Profile"
-            className="w-24 h-24 rounded-3xl object-cover shadow-lg"
+            className="w-24 h-24 rounded-3xl object-cover shadow-[var(--shadow-card)]"
           />
 
           <button
             type="button"
-            className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-xl absolute -bottom-2 -right-2 shadow-md hover:bg-red-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center bg-danger text-white rounded-xl absolute -bottom-2 -right-2 shadow-[var(--shadow-button)] hover:bg-danger/90 transition-colors"
             onClick={handleRemoveImage}
           >
             <LuTrash2 className="text-sm" />
@@ -92,7 +92,7 @@ const ProfilePhotoSelector = ({
         </div>
       )}
 
-      <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">
+      <p className="text-xs text-ink-faint mt-3 text-center">
         Upload PNG, JPG, JPEG or WEBP image
       </p>
     </div>

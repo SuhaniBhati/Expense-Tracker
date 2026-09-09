@@ -1,3 +1,4 @@
+
 import React, {
   useContext,
   useState,
@@ -41,13 +42,13 @@ const SideMenu = ({ activeMenu }) => {
 
   return (
     <>
-      <div className="w-64 h-[calc(100vh-61px)] bg-white dark:bg-slate-950 border-r border-gray-100 dark:border-slate-800 p-5 sticky top-[61px] z-20 flex flex-col">
-        <div className="flex flex-col items-center gap-3 mt-2 mb-6 pb-6 border-b border-gray-100 dark:border-slate-800">
+      <div className="w-64 h-full bg-nav border-r border-line p-5 flex flex-col">
+        <div className="flex flex-col items-center gap-3 mt-2 mb-6 pb-6 border-b border-line">
           {user?.profileImageUrl ? (
             <img
               src={user.profileImageUrl}
               alt="Profile"
-              className="w-16 h-16 rounded-2xl object-cover shadow-md"
+              className="w-16 h-16 rounded-2xl object-cover shadow-[var(--shadow-card)]"
             />
           ) : (
             <CharAvatar
@@ -59,11 +60,11 @@ const SideMenu = ({ activeMenu }) => {
           )}
 
           <div className="text-center">
-            <h5 className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
+            <h5 className="text-sm font-semibold text-ink leading-tight">
               {user?.fullName || ""}
             </h5>
 
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-[180px]">
+            <p className="text-xs text-ink-faint mt-0.5 truncate max-w-[180px]">
               {user?.email || ""}
             </p>
           </div>
@@ -72,7 +73,7 @@ const SideMenu = ({ activeMenu }) => {
             onClick={() =>
               setOpenEditModal(true)
             }
-            className="flex items-center gap-2 text-xs bg-primary/10 text-primary px-4 py-2 rounded-xl hover:bg-primary hover:text-white transition-all duration-200"
+            className="flex items-center gap-2 text-xs bg-primary-soft text-primary px-4 py-2 rounded-xl hover:bg-primary hover:text-white transition-all duration-200"
           >
             <LuPencilLine />
             Edit Profile
@@ -87,12 +88,12 @@ const SideMenu = ({ activeMenu }) => {
                 className={`w-full flex items-center gap-3 text-sm py-3 px-4 rounded-xl mb-1 transition-all duration-200
               ${
                 activeMenu === item.label
-                  ? "bg-primary text-white shadow-md shadow-purple-500/30 font-semibold"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-primary"
+                  ? "bg-primary text-white shadow-[var(--shadow-button)] font-semibold"
+                  : "text-ink-muted hover:bg-hover hover:text-primary"
               }
               ${
                 item.id === "05"
-                  ? "mt-auto border-t border-gray-100 dark:border-slate-800 pt-3"
+                  ? "mt-auto border-t border-line pt-3"
                   : ""
               }
             `}

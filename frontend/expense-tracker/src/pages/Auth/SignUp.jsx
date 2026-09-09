@@ -1,3 +1,5 @@
+
+
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -87,10 +89,10 @@ const SignUp = () => {
   return (
     <AuthLayout>
       <div className="et-fade-in">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+        <h3 className="text-2xl font-bold text-ink mb-1">
           Create Account
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-sm text-ink-muted mb-6">
           Join us today — it's free!
         </p>
 
@@ -142,7 +144,7 @@ const SignUp = () => {
           </div>
         </form>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-5 text-center">
+        <p className="text-sm text-ink-muted mt-5 text-center">
           Already have an account?{" "}
           <Link className="font-semibold text-primary hover:underline" to="/login">
             Sign in

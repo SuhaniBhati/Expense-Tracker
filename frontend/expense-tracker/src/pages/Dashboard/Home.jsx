@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -90,11 +91,11 @@ const Home = () => {
         {/* HEADER */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-ink">
               Dashboard
             </h1>
 
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-ink-muted mt-1">
               Track your financial health with smart insights
             </p>
           </div>
@@ -149,11 +150,11 @@ const Home = () => {
           <div className="et-card">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h5 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <h5 className="text-lg font-semibold text-ink">
                   Income vs Expenses
                 </h5>
 
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs text-ink-muted mt-1">
                   Last 6 months overview
                 </p>
               </div>
@@ -174,11 +175,11 @@ const Home = () => {
           <div className="et-card">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h5 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <h5 className="text-lg font-semibold text-ink">
                   Expense Categories
                 </h5>
 
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs text-ink-muted mt-1">
                   Spending distribution
                 </p>
               </div>
@@ -226,16 +227,16 @@ const Home = () => {
           {/* TOP CATEGORIES */}
           <div className="et-card">
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
-                <LuStar className="text-amber-500 text-lg" />
+              <div className="w-10 h-10 rounded-2xl bg-warning-soft flex items-center justify-center">
+                <LuStar className="text-warning text-lg" />
               </div>
 
               <div>
-                <h5 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <h5 className="text-lg font-semibold text-ink">
                   Top Categories
                 </h5>
 
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-ink-muted">
                   Highest spending areas
                 </p>
               </div>
@@ -276,16 +277,16 @@ const Home = () => {
                         key={index}
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                          <span className="text-sm font-medium text-ink truncate">
                             {cat.name}
                           </span>
 
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                          <span className="text-xs text-ink-muted">
                             {pct}%
                           </span>
                         </div>
 
-                        <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-3 bg-line-subtle rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all duration-700"
                             style={{
@@ -296,7 +297,7 @@ const Home = () => {
                           />
                         </div>
 
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+                        <p className="text-xs text-ink-muted mt-1.5">
                           ₹
                           {addThousandsSeparator(
                             cat.amount
@@ -309,7 +310,7 @@ const Home = () => {
               </div>
             ) : (
               <div className="text-center py-10">
-                <p className="text-sm text-slate-400 dark:text-slate-500">
+                <p className="text-sm text-ink-faint">
                   No expense data available
                 </p>
               </div>
@@ -327,8 +328,8 @@ const Home = () => {
                 dashboardData
                   ?.last30DaysExpense
                   ?.total || 0,
-              color: "text-rose-500",
-              bg: "bg-rose-50 dark:bg-rose-500/10",
+              color: "text-danger",
+              bg: "bg-danger-soft",
               icon: <LuHandCoins />,
             },
             {
@@ -339,8 +340,8 @@ const Home = () => {
                   ?.last60DaysIncome
                   ?.total || 0,
               color:
-                "text-emerald-500",
-              bg: "bg-emerald-50 dark:bg-emerald-500/10",
+                "text-success",
+              bg: "bg-success-soft",
               icon: <LuWalletMinimal />,
             },
             {
@@ -352,8 +353,8 @@ const Home = () => {
                   ?.length || 0,
               isCount: true,
               color:
-                "text-violet-500",
-              bg: "bg-violet-50 dark:bg-violet-500/10",
+                "text-primary",
+              bg: "bg-primary-soft",
               icon: <LuTrendingUp />,
             },
             {
@@ -365,14 +366,14 @@ const Home = () => {
                   ?.length || 0,
               isCount: true,
               color:
-                "text-amber-500",
-              bg: "bg-amber-50 dark:bg-amber-500/10",
+                "text-warning",
+              bg: "bg-warning-soft",
               icon: <LuStar />,
             },
           ].map((stat, i) => (
             <div
               key={i}
-              className={`${stat.bg} rounded-3xl p-5 border border-white/40 dark:border-white/5 transition-all duration-200 hover:-translate-y-1`}
+              className={`${stat.bg} rounded-3xl p-5 border border-line-subtle transition-all duration-200 hover:-translate-y-1`}
             >
               <div className="text-2xl mb-3">
                 <span className={stat.color}>
@@ -380,7 +381,7 @@ const Home = () => {
                 </span>
               </div>
 
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-ink-muted">
                 {stat.sublabel}
               </p>
 
@@ -394,7 +395,7 @@ const Home = () => {
                     )}`}
               </p>
 
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              <p className="text-xs text-ink-faint mt-1">
                 {stat.label}
               </p>
             </div>

@@ -16,11 +16,9 @@ export const ThemeProvider = ({ children }) => {
 
     if (isDark) {
       root.classList.add("dark");
-      root.style.backgroundColor = "#020617";
       localStorage.setItem("theme", "dark");
     } else {
       root.classList.remove("dark");
-      root.style.backgroundColor = "#f8fafc";
       localStorage.setItem("theme", "light");
     }
   }, [isDark]);
