@@ -7,19 +7,28 @@ exports.addIncome = async (req, res) => {
   const userId = req.user.id;
   try {
     const { icon, source, amount, date, description } = req.body;
-    if (!source || !amount || !date) {
+    if (!source || typeof source !== "string" || !source.trim() || amount === undefined || amount === null || !date) {
       return res.status(400).json({ message: "Please fill all the required fields" });
     }
-    if (isNaN(amount) || Number(amount) <= 0) {
-      return res.status(400).json({ message: "Amount must be a positive number" });
+    const numAmount = Number(amount);
+    if (isNaN(numAmount) || numAmount <= 0 || numAmount > 1000000000) {
+      return res.status(400).json({ message: "Amount must be a positive number less than 1,000,000,000" });
     }
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+    const cleanDescription = typeof description === "string" ? description.slice(0, 500) : "";
+    const cleanSource = source.trim().slice(0, 100);
+    const cleanIcon = typeof icon === "string" ? icon.slice(0, 100) : "";
+
     const newIncome = new Income({
       userId,
-      icon: icon || "",
-      source,
-      amount: Number(amount),
-      date: new Date(date),
-      description: description || "",
+      icon: cleanIcon,
+      source: cleanSource,
+      amount: Math.round(numAmount * 100) / 100,
+      date: parsedDate,
+      description: cleanDescription,
     });
     await newIncome.save();
     res.status(201).json(newIncome);
@@ -54,7 +63,7 @@ exports.deleteIncome = async (req, res) => {
   }
 };
 
-// Download Excel
+// Download Excel (In-memory streaming)
 exports.downloadIncomeExcel = async (req, res) => {
   const userId = req.user.id;
   try {
@@ -62,19 +71,25 @@ exports.downloadIncomeExcel = async (req, res) => {
     const data = income.map((item) => ({
       Source: item.source,
       Amount: item.amount,
-      Date: item.date.toLocaleDateString(),
+      Date: new Date(item.date).toISOString().split("T")[0],
       Description: item.description || "",
     }));
     const wb = xlsx.utils.book_new();
     const ws = xlsx.utils.json_to_sheet(data);
     xlsx.utils.book_append_sheet(wb, ws, "Income");
-    const filePath = path.join(__dirname, "../uploads/income_details.xlsx");
-    xlsx.writeFile(wb, filePath);
-    res.download(filePath, "income_details.xlsx", (err) => {
-      if (err) {
-        res.status(500).json({ message: "Error downloading file" });
-      }
-    });
+    
+    // Generate XLSX in-memory buffer - no file written to disk
+    const buffer = xlsx.write(wb, { type: "buffer", bookType: "xlsx" });
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income_details.xlsx"'
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    return res.send(buffer);
   } catch (error) {
     res.status(500).json({ message: "Error downloading income data", error: error.message });
   }

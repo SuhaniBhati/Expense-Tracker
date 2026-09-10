@@ -65,7 +65,7 @@ const Home = () => {
             response.data
           );
         }
-      } catch (error) {
+      } catch {
         toast.error(
           "Failed to load dashboard data"
         );

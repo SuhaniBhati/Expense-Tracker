@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import toast from "react-hot-toast";
 
@@ -58,7 +58,7 @@ const Budget = () => {
   const [saving, setSaving] =
     useState(false);
 
-  const fetchBudget = async () => {
+  const fetchBudget = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -81,18 +81,18 @@ const Budget = () => {
       } else {
         setNewLimit("");
       }
-    } catch (err) {
+    } catch {
       toast.error(
         "Failed to load budget data"
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     fetchBudget();
-  }, [selectedMonth, selectedYear]);
+  }, [fetchBudget]);
 
   const handleSetBudget = async (e) => {
     e.preventDefault();

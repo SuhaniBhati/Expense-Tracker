@@ -29,7 +29,7 @@ const Income = () => {
     try {
       const res = await axiosInstance.get(API_PATHS.INCOME.GET_ALL_INCOME);
       setIncomeList(res.data || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load income data");
     } finally {
       setLoading(false);
@@ -56,7 +56,7 @@ const Income = () => {
       await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(id));
       toast.success("Income deleted");
       setIncomeList((prev) => prev.filter((item) => item._id !== id));
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete income");
     }
   };
@@ -74,16 +74,21 @@ const Income = () => {
       link.click();
       link.remove();
       toast.success("Downloaded successfully!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to download");
     }
   };
 
   // Stats
   const totalIncome = incomeList.reduce((s, i) => s + i.amount, 0);
-  const thisMonth = new Date().getMonth();
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
   const thisMonthIncome = incomeList
-    .filter((i) => new Date(i.date).getMonth() === thisMonth)
+    .filter((i) => {
+      const d = new Date(i.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
     .reduce((s, i) => s + i.amount, 0);
 
   // Chart data: last 6 months

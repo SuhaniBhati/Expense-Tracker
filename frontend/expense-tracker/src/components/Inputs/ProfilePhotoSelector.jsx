@@ -13,7 +13,7 @@ const ProfilePhotoSelector = ({
 }) => {
   const inputRef = useRef(null);
 
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(() => (image ? URL.createObjectURL(image) : null));
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];

@@ -20,7 +20,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     }
-}, { timestamps: true });
+}, { 
+    timestamps: true,
+    toJSON: {
+        transform: function(doc, ret) {
+            delete ret.password;
+            return ret;
+        }
+    }
+});
 
 // Hash password before saving
 userSchema.pre('save', async function() {

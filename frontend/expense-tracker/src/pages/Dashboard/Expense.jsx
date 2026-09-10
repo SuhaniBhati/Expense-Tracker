@@ -31,7 +31,7 @@ const Expense = () => {
     try {
       const res = await axiosInstance.get(API_PATHS.EXPENSE.GET_ALL_EXPENSE);
       setExpenseList(res.data || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load expense data");
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ const Expense = () => {
       await axiosInstance.delete(API_PATHS.EXPENSE.DELETE_EXPENSE(id));
       toast.success("Expense deleted");
       setExpenseList((prev) => prev.filter((item) => item._id !== id));
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete expense");
     }
   };
@@ -76,16 +76,21 @@ const Expense = () => {
       link.click();
       link.remove();
       toast.success("Downloaded successfully!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to download");
     }
   };
 
   // Stats
   const totalExpense = expenseList.reduce((s, e) => s + e.amount, 0);
-  const thisMonth = new Date().getMonth();
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
   const thisMonthExpense = expenseList
-    .filter((e) => new Date(e.date).getMonth() === thisMonth)
+    .filter((e) => {
+      const d = new Date(e.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
     .reduce((s, e) => s + e.amount, 0);
 
   // Chart data: last 6 months

@@ -7,16 +7,26 @@ exports.setBudget = async (req, res) => {
   const userId = req.user.id;
   try {
     const { monthlyLimit, month, year } = req.body;
-    if (!monthlyLimit || !month || !year) {
+    if (monthlyLimit === undefined || monthlyLimit === null || !month || !year) {
       return res.status(400).json({ message: "monthlyLimit, month and year are required" });
     }
-    if (isNaN(monthlyLimit) || Number(monthlyLimit) <= 0) {
-      return res.status(400).json({ message: "Monthly limit must be a positive number" });
+    const numLimit = Number(monthlyLimit);
+    const numMonth = parseInt(month, 10);
+    const numYear = parseInt(year, 10);
+
+    if (isNaN(numLimit) || numLimit <= 0 || numLimit > 1000000000) {
+      return res.status(400).json({ message: "Monthly limit must be a positive number less than 1,000,000,000" });
+    }
+    if (isNaN(numMonth) || numMonth < 1 || numMonth > 12) {
+      return res.status(400).json({ message: "Month must be between 1 and 12" });
+    }
+    if (isNaN(numYear) || numYear < 2000 || numYear > 2100) {
+      return res.status(400).json({ message: "Year must be between 2000 and 2100" });
     }
 
     const budget = await Budget.findOneAndUpdate(
-      { userId, month, year },
-      { monthlyLimit: Number(monthlyLimit) },
+      { userId, month: numMonth, year: numYear },
+      { monthlyLimit: Math.round(numLimit * 100) / 100 },
       { new: true, upsert: true, runValidators: true }
     );
     res.status(200).json(budget);
