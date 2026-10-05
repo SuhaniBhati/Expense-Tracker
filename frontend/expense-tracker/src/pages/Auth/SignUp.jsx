@@ -30,61 +30,128 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!fullName || !email || !password || !confirmPassword) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-    if (!validateFullName(fullName)) {
-      toast.error("Full name must be at least 3 characters");
-      return;
-    }
-    if (!validateEmail(email)) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-    if (!validatePassword(password)) {
-      toast.error("Password must be at least 8 characters and contain a number");
-      return;
-    }
-    if (!validateConfirmPassword(password, confirmPassword)) {
-      toast.error("Passwords do not match");
-      return;
+  if (
+    !fullName ||
+    !email ||
+    !password ||
+    !confirmPassword
+  ) {
+    toast.error(
+      "Please fill in all required fields"
+    );
+    return;
+  }
+
+  if (!validateFullName(fullName)) {
+    toast.error(
+      "Full name must be at least 3 characters"
+    );
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    toast.error(
+      "Please enter a valid email address"
+    );
+    return;
+  }
+
+  if (!validatePassword(password)) {
+    toast.error(
+      "Password must be at least 8 characters and contain a number"
+    );
+    return;
+  }
+
+  if (
+    !validateConfirmPassword(
+      password,
+      confirmPassword
+    )
+  ) {
+    toast.error("Passwords do not match");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // ───────────────────────────────────────
+    // 1. Register user first
+    // ───────────────────────────────────────
+
+    const response =
+      await axiosInstance.post(
+        API_PATHS.AUTH.SIGNUP,
+        {
+          fullName,
+          email,
+          password,
+        }
+      );
+
+    const token =
+      response.data.token ||
+      response.data.data?.token;
+
+    let user =
+      response.data.user ||
+      response.data.data?.user;
+
+    if (!token) {
+      throw new Error(
+        "Token not found in response"
+      );
     }
 
-    setLoading(true);
-    try {
-      let profileImageUrl = "";
-      if (profilePic) {
-        const imgRes = await uploadImage(profilePic);
-        profileImageUrl = imgRes.imageUrl || "";
-      }
+    // ───────────────────────────────────────
+    // 2. Save token
+    // ───────────────────────────────────────
 
-      const response = await axiosInstance.post(API_PATHS.AUTH.SIGNUP, {
-        fullName,
-        email,
-        password,
-        profileImageUrl,
-      });
+    localStorage.setItem(
+      "token",
+      token
+    );
 
-      const token = response.data.token || response.data.data?.token;
-      const user = response.data.user || response.data.data?.user;
+    // ───────────────────────────────────────
+    // 3. Upload profile image if selected
+    // ───────────────────────────────────────
 
-      if (!token) throw new Error("Token not found in response");
+    if (profilePic) {
+      const uploadResponse =
+        await uploadImage(profilePic);
 
-      localStorage.setItem("token", token);
-      updateUser(user);
-      toast.success(`Welcome, ${user?.fullName?.split(" ")[0] || ""}! Account created.`);
-      navigate("/dashboard");
-    } catch (error) {
-      const msg =
-        error.response?.data?.message || error.message || "Registration failed. Try again.";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
+      user =
+        uploadResponse.user ||
+        user;
     }
-  };
+
+    // ───────────────────────────────────────
+    // 4. Update context
+    // ───────────────────────────────────────
+
+    updateUser(user);
+
+    toast.success(
+      `Welcome, ${
+        user?.fullName?.split(" ")[0] || ""
+      }! Account created.`
+    );
+
+    navigate("/dashboard");
+  } catch (error) {
+    const msg =
+      error.response?.data?.message ||
+      error.message ||
+      "Registration failed. Try again.";
+
+    toast.error(msg);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <AuthLayout>

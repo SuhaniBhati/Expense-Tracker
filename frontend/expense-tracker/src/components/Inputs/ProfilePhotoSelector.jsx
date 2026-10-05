@@ -1,4 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+} from "react";
+
 import {
   LuUser,
   LuUpload,
@@ -10,26 +15,56 @@ const ProfilePhotoSelector = ({
   setImage,
   existingImage,
   onRemoveExisting,
+  onSelectNew,
 }) => {
   const inputRef = useRef(null);
 
-  const [previewUrl, setPreviewUrl] = useState(() => (image ? URL.createObjectURL(image) : null));
+  const [previewUrl, setPreviewUrl] =
+    useState(() =>
+      image
+        ? URL.createObjectURL(image)
+        : null
+    );
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
 
-    if (file) {
-      setImage(file);
+    if (!file) {
+      return;
+    }
 
-      const preview =
-        URL.createObjectURL(file);
+    setImage(file);
 
-      setPreviewUrl(preview);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    const preview =
+      URL.createObjectURL(file);
+
+    setPreviewUrl(preview);
+
+    // Tell parent that a new image was selected
+    if (onSelectNew) {
+      onSelectNew();
     }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setPreviewUrl(null);
 
     if (onRemoveExisting) {
@@ -58,7 +93,7 @@ const ProfilePhotoSelector = ({
         <div
           className="relative w-24 h-24 flex items-center justify-center bg-primary-soft rounded-3xl cursor-pointer hover:bg-primary/15 transition-all duration-200"
           onClick={() =>
-            inputRef.current.click()
+            inputRef.current?.click()
           }
         >
           <LuUser className="text-primary text-5xl" />
@@ -68,7 +103,7 @@ const ProfilePhotoSelector = ({
             className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-xl absolute -bottom-2 -right-2 shadow-[var(--shadow-button)] hover:bg-primary-hover transition-colors"
             onClick={(e) => {
               e.stopPropagation();
-              inputRef.current.click();
+              inputRef.current?.click();
             }}
           >
             <LuUpload className="text-sm" />

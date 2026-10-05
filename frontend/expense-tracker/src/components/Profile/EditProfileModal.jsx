@@ -1,48 +1,111 @@
-import React, { useContext, useState } from "react";
+import React, {
+  useContext,
+  useState,
+} from "react";
+
 import Modal from "../Modal";
 import ProfilePhotoSelector from "../Inputs/ProfilePhotoSelector";
+
 import { UserContext } from "../../context/userContext";
 import axiosInstance from "../../utils/axiosInstance";
 import uploadImage from "../../utils/uploadImage";
 import { API_PATHS } from "../../utils/apiPaths";
 
-const EditProfileModal = ({ isOpen, onClose }) => {
-  const { user, updateUserProfile } = useContext(UserContext);
+const EditProfileModal = ({
+  isOpen,
+  onClose,
+}) => {
+  const {
+    user,
+    updateUserProfile,
+  } = useContext(UserContext);
 
-  const [fullName, setFullName] = useState(user?.fullName || "");
-  const [image, setImage] = useState(null);
+  const [fullName, setFullName] =
+    useState(user?.fullName || "");
 
-  const [removeImage, setRemoveImage] = useState(false);
+  const [image, setImage] =
+    useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [removeImage, setRemoveImage] =
+    useState(false);
 
-  const [error, setError] = useState("");
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
 
   const handleSave = async () => {
     try {
       setLoading(true);
       setError("");
 
-      let imageUrl = user?.profileImageUrl || null;
+      let updatedUser = null;
+
+      // ─────────────────────────────────────────
+      // 1. Upload new profile image
+      // ─────────────────────────────────────────
 
       if (image) {
-        const uploadResponse = await uploadImage(image);
-        imageUrl = uploadResponse.imageUrl;
+        const uploadResponse =
+          await uploadImage(image);
+
+        updatedUser =
+          uploadResponse.user;
       }
 
-      const response = await axiosInstance.put(
-        API_PATHS.AUTH.UPDATE_PROFILE,
-        {
-          fullName,
-          profileImageUrl: removeImage ? null : imageUrl,
-          removeProfileImage: removeImage,
-        }
-      );
+      // ─────────────────────────────────────────
+      // 2. Remove existing image
+      // ─────────────────────────────────────────
 
-      updateUserProfile(response.data.user);
+      if (
+        removeImage &&
+        !image
+      ) {
+        const response =
+          await axiosInstance.put(
+            API_PATHS.AUTH.UPDATE_PROFILE,
+            {
+              fullName,
+              removeProfileImage: true,
+            }
+          );
+
+        updatedUser =
+          response.data.user;
+      }
+
+      // ─────────────────────────────────────────
+      // 3. Update name
+      // ─────────────────────────────────────────
+
+      if (
+        !image &&
+        !removeImage
+      ) {
+        const response =
+          await axiosInstance.put(
+            API_PATHS.AUTH.UPDATE_PROFILE,
+            {
+              fullName,
+            }
+          );
+
+        updatedUser =
+          response.data.user;
+      }
+
+      if (updatedUser) {
+        updateUserProfile(updatedUser);
+      }
 
       onClose();
     } catch (err) {
+      console.error(
+        "Profile update error:",
+        err
+      );
+
       setError(
         err?.response?.data?.message ||
           "Something went wrong"
@@ -66,9 +129,14 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         <ProfilePhotoSelector
           image={image}
           setImage={setImage}
-          existingImage={user?.profileImageUrl}
+          existingImage={
+            user?.profileImageUrl
+          }
           onRemoveExisting={() => {
             setRemoveImage(true);
+          }}
+          onSelectNew={() => {
+            setRemoveImage(false);
           }}
         />
 
@@ -97,7 +165,8 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         <div className="flex justify-end gap-3 mt-8">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl border border-line text-ink-muted hover:bg-hover transition-all"
+            disabled={loading}
+            className="px-5 py-2.5 rounded-xl border border-line text-ink-muted hover:bg-hover transition-all disabled:opacity-50"
           >
             Cancel
           </button>
@@ -107,7 +176,9 @@ const EditProfileModal = ({ isOpen, onClose }) => {
             disabled={loading}
             className="px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-hover transition-all disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading
+              ? "Saving..."
+              : "Save Changes"}
           </button>
         </div>
       </div>

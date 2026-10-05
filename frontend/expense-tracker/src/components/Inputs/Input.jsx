@@ -34,7 +34,6 @@ const Input = ({ value, onChange, label, placeholder, type }) => {
             outline-none
             border-none
             text-ink
-            placeholder:text-ink-faint
             appearance-none
           "
           style={{

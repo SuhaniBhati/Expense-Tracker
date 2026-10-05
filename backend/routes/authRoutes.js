@@ -1,45 +1,52 @@
 const express = require("express");
 
-const { protect } = require("../middleware/authMiddleware");
-
 const {
-  registerUser,
   loginUser,
+  registerUser,
   getUserInfo,
   updateProfile,
-  getProfileImage,
+  uploadProfileImage,
 } = require("../controllers/authController");
+
+const { protect } = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
-const upload = require("../middleware/uploadMiddleware");
-
-router.post("/register", registerUser);
+// ─────────────────────────────────────────────────────────────
+// Authentication
+// ─────────────────────────────────────────────────────────────
 
 router.post("/login", loginUser);
 
-router.get("/getUser", protect, getUserInfo);
+router.post("/register", registerUser);
 
-router.put("/update-profile", protect, updateProfile);
+// ─────────────────────────────────────────────────────────────
+// Profile Image
+// ─────────────────────────────────────────────────────────────
+// No `protect` here because the image is uploaded BEFORE
+// the user account is created.
 
-// Authenticated image streaming
-router.get("/profile-image/:filename", protect, getProfileImage);
+router.post(
+  "/upload-image",
+  upload.single("profileImage"),
+  uploadProfileImage
+);
 
-router.post("/upload-image", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({
-      message: "No file uploaded",
-    });
-  }
+// ─────────────────────────────────────────────────────────────
+// User
+// ─────────────────────────────────────────────────────────────
 
-  const imageUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/profile-image/${
-    req.file.filename
-  }`;
+router.get(
+  "/getUser",
+  protect,
+  getUserInfo
+);
 
-  res.status(200).json({
-    message: "File uploaded successfully",
-    imageUrl,
-  });
-});
+router.put(
+  "/update-profile",
+  protect,
+  updateProfile
+);
 
 module.exports = router;

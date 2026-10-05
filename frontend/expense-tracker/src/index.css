@@ -36,7 +36,8 @@
   /* Text */
   --color-ink: #0f172a;
   --color-ink-muted: #58627a;
-  --color-ink-faint: #94a3b8;
+  --color-ink-faint: #9ca3af;
+  --color-placeholder: #7c8cb2;
 
   /* Brand */
   --color-primary: #875cf5;
@@ -85,6 +86,7 @@
   --color-ink: #eef1f6;
   --color-ink-muted: #97a1b8;
   --color-ink-faint: #667085;
+  --color-placeholder: #7c8cb2;
 
   --color-primary: #9370fa;
   --color-primary-hover: #a888fb;
@@ -192,7 +194,8 @@
 
 .et-input input::placeholder,
 .et-input textarea::placeholder {
-  color: var(--color-ink-faint);
+  color: var(--color-placeholder);
+  opacity: 1;
 }
 
 /* ============================================================

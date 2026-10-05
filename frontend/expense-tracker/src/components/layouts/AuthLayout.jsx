@@ -73,7 +73,7 @@ const AuthLayout = ({ children }) => {
           </p>
 
           {/* Feature Cards */}
-          <div className="mt-10 space-y-3 text-left">
+          <div className="mt-3 space-y-2 text-left">
             {[
               {
                 icon: <LuTrendingUp />,
