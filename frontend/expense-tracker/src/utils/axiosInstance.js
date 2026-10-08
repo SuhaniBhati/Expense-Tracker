@@ -9,6 +9,10 @@ const axiosInstance = axios.create({
   },
 });
 
+// Login/register return 401 for wrong credentials. That must show an
+// error message, not trigger a page reload to /login.
+const AUTH_ATTEMPT_PATHS = ["/auth/login", "/auth/register"];
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -17,32 +21,35 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // For FormData we intentionally do NOT set Content-Type:
+    // the browser adds multipart/form-data with the correct boundary.
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response) {
       if (error.response.status === 401) {
-        window.location.href = "/login";
-      } else if (error.response.status === 500) {
-        console.error(
-          "Server error:",
-          error.response.data
+        const url = error.config?.url || "";
+        const isAuthAttempt = AUTH_ATTEMPT_PATHS.some((path) =>
+          url.includes(path)
         );
+
+        if (!isAuthAttempt) {
+          localStorage.removeItem("token");
+
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
+        }
+      } else if (error.response.status === 500) {
+        console.error("Server error:", error.response.data);
       }
     } else if (error.code === "ECONNABORTED") {
-      console.error(
-        "Request timeout:",
-        error.message
-      );
+      console.error("Request timeout:", error.message);
     }
 
     return Promise.reject(error);

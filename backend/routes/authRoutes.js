@@ -5,11 +5,12 @@ const {
   registerUser,
   getUserInfo,
   updateProfile,
-  uploadProfileImage,
 } = require("../controllers/authController");
 
 const { protect } = require("../middleware/authMiddleware");
-const upload = require("../middleware/uploadMiddleware");
+const {
+  handleProfileImageUpload,
+} = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
@@ -19,33 +20,23 @@ const router = express.Router();
 
 router.post("/login", loginUser);
 
-router.post("/register", registerUser);
+// Accepts JSON or multipart/form-data with optional "profileImage".
+// The image is uploaded by the server as part of registration, so
+// there is no separate (and previously unauthenticated) upload route.
+router.post("/register", handleProfileImageUpload, registerUser);
 
 // ─────────────────────────────────────────────────────────────
-// Profile Image
-// ─────────────────────────────────────────────────────────────
-// No `protect` here because the image is uploaded BEFORE
-// the user account is created.
-
-router.post(
-  "/upload-image",
-  upload.single("profileImage"),
-  uploadProfileImage
-);
-
-// ─────────────────────────────────────────────────────────────
-// User
+// User (protected)
 // ─────────────────────────────────────────────────────────────
 
-router.get(
-  "/getUser",
-  protect,
-  getUserInfo
-);
+router.get("/getUser", protect, getUserInfo);
 
+// `protect` runs BEFORE multer so unauthenticated requests
+// never get their files parsed.
 router.put(
   "/update-profile",
   protect,
+  handleProfileImageUpload,
   updateProfile
 );
 

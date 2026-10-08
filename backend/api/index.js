@@ -1,19 +1,6 @@
-
+// Single Vercel entry point. vercel.json rewrites every request here.
+// An Express app is a valid (req, res) handler, and the DB connection
+// is handled by middleware inside server.js (after CORS).
 const app = require("../server");
-const connectDB = require("../config/db");
 
-const handler = async (req, res) => {
-  try {
-    await connectDB();
-    return app(req, res);
-  } catch (error) {
-    console.error("Server error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
-
-module.exports = handler;
+module.exports = app;

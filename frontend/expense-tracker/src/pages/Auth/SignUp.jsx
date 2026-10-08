@@ -1,5 +1,3 @@
-
-
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -15,7 +13,6 @@ import {
 } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import uploadImage from "../../utils/uploadImage";
 import { UserContext } from "../../context/userContext";
 
 const SignUp = () => {
@@ -30,135 +27,91 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (
-    !fullName ||
-    !email ||
-    !password ||
-    !confirmPassword
-  ) {
-    toast.error(
-      "Please fill in all required fields"
-    );
-    return;
-  }
+    if (!fullName || !email || !password || !confirmPassword) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-  if (!validateFullName(fullName)) {
-    toast.error(
-      "Full name must be at least 3 characters"
-    );
-    return;
-  }
+    if (!validateFullName(fullName)) {
+      toast.error("Full name must be at least 3 characters");
+      return;
+    }
 
-  if (!validateEmail(email)) {
-    toast.error(
-      "Please enter a valid email address"
-    );
-    return;
-  }
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
 
-  if (!validatePassword(password)) {
-    toast.error(
-      "Password must be at least 8 characters and contain a number"
-    );
-    return;
-  }
+    if (!validatePassword(password)) {
+      toast.error(
+        "Password must be at least 8 characters and contain a number"
+      );
+      return;
+    }
 
-  if (
-    !validateConfirmPassword(
-      password,
-      confirmPassword
-    )
-  ) {
-    toast.error("Passwords do not match");
-    return;
-  }
+    if (!validateConfirmPassword(password, confirmPassword)) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // ───────────────────────────────────────
-    // 1. Register user first
-    // ───────────────────────────────────────
+    try {
+      // Single request: the server creates the account AND uploads the
+      // optional image to Cloudinary. The field name "profileImage" must
+      // match upload.single("profileImage") on the backend.
+      const formData = new FormData();
+      formData.append("fullName", fullName.trim());
+      formData.append("email", email.trim());
+      formData.append("password", password);
 
-    const response =
-      await axiosInstance.post(
+      if (profilePic) {
+        formData.append("profileImage", profilePic);
+      }
+
+      // No manual Content-Type header: the browser sets the multipart
+      // boundary. Longer timeout because of cold start + image upload.
+      const response = await axiosInstance.post(
         API_PATHS.AUTH.SIGNUP,
-        {
-          fullName,
-          email,
-          password,
-        }
+        formData,
+        { timeout: 60000 }
       );
 
-    const token =
-      response.data.token ||
-      response.data.data?.token;
+      const token = response.data.token || response.data.data?.token;
+      const user = response.data.user || response.data.data?.user;
 
-    let user =
-      response.data.user ||
-      response.data.data?.user;
+      if (!token) {
+        throw new Error("Token not found in response");
+      }
 
-    if (!token) {
-      throw new Error(
-        "Token not found in response"
+      localStorage.setItem("token", token);
+      updateUser(user);
+
+      toast.success(
+        `Welcome, ${user?.fullName?.split(" ")[0] || ""}! Account created.`
       );
+
+      navigate("/dashboard");
+    } catch (error) {
+      const msg =
+        error.response?.data?.message ||
+        (error.request && !error.response
+          ? "Cannot reach the server. Please try again."
+          : error.message) ||
+        "Registration failed. Try again.";
+
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
-
-    // ───────────────────────────────────────
-    // 2. Save token
-    // ───────────────────────────────────────
-
-    localStorage.setItem(
-      "token",
-      token
-    );
-
-    // ───────────────────────────────────────
-    // 3. Upload profile image if selected
-    // ───────────────────────────────────────
-
-    if (profilePic) {
-      const uploadResponse =
-        await uploadImage(profilePic);
-
-      user =
-        uploadResponse.user ||
-        user;
-    }
-
-    // ───────────────────────────────────────
-    // 4. Update context
-    // ───────────────────────────────────────
-
-    updateUser(user);
-
-    toast.success(
-      `Welcome, ${
-        user?.fullName?.split(" ")[0] || ""
-      }! Account created.`
-    );
-
-    navigate("/dashboard");
-  } catch (error) {
-    const msg =
-      error.response?.data?.message ||
-      error.message ||
-      "Registration failed. Try again.";
-
-    toast.error(msg);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <AuthLayout>
       <div className="et-fade-in">
-        <h3 className="text-2xl font-bold text-ink mb-1">
-          Create Account
-        </h3>
+        <h3 className="text-2xl font-bold text-ink mb-1">Create Account</h3>
         <p className="text-sm text-ink-muted mb-6">
           Join us today — it's free!
         </p>
@@ -213,7 +166,10 @@ const SignUp = () => {
 
         <p className="text-sm text-ink-muted mt-5 text-center">
           Already have an account?{" "}
-          <Link className="font-semibold text-primary hover:underline" to="/login">
+          <Link
+            className="font-semibold text-primary hover:underline"
+            to="/login"
+          >
             Sign in
           </Link>
         </p>

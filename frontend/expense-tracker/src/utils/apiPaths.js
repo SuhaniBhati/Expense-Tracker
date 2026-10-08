@@ -1,13 +1,19 @@
-export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const rawBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+// Normalize so a trailing slash or an accidental "/api/v1" suffix in
+// VITE_API_URL can never produce "//api/v1/..." or "/api/v1/api/v1/...".
+export const BASE_URL = rawBaseUrl
+  .trim()
+  .replace(/\/+$/, "")
+  .replace(/\/api\/v1$/, "");
 
 export const API_PATHS = {
   AUTH: {
-  LOGIN: "/api/v1/auth/login",
-  SIGNUP: "/api/v1/auth/register",
-  GET_USER_INFO: "/api/v1/auth/getUser",
-  UPLOAD_IMAGE: "/api/v1/auth/upload-image",
-  UPDATE_PROFILE: "/api/v1/auth/update-profile",
-},
+    LOGIN: "/api/v1/auth/login",
+    SIGNUP: "/api/v1/auth/register",
+    GET_USER_INFO: "/api/v1/auth/getUser",
+    UPDATE_PROFILE: "/api/v1/auth/update-profile",
+  },
 
   DASHBOARD: {
     GET_DATA: "/api/v1/dashboard",
